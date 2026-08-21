@@ -15,6 +15,7 @@ import io
 import json
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import streamlit as st
 from PIL import Image
@@ -23,8 +24,15 @@ from aircraft_damage.app.styles import CUSTOM_CSS
 from aircraft_damage.config import Config, load_config
 from aircraft_damage.pipeline import build_packet
 from aircraft_damage.reporting.llm import OllamaClient, OllamaError
-from aircraft_damage.reporting.report import LOW_CONFIDENCE_THRESHOLD, generate_report
+from aircraft_damage.reporting.report import (
+    LOW_CONFIDENCE_THRESHOLD,
+    EvidencePacket,
+    generate_report,
+)
 from aircraft_damage.vision.classifier import DamageClassifier, ModelNotTrainedError
+
+if TYPE_CHECKING:
+    from aircraft_damage.vision.captioning import BlipDescriber
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +58,7 @@ def load_classifier(model_path: Path, metrics_path: Path) -> DamageClassifier:
 
 
 @st.cache_resource(show_spinner=False)
-def load_describer(model_id: str) -> object:
+def load_describer(model_id: str) -> BlipDescriber:
     """Load BLIP once per session.
 
     The import lives here so that starting the app without ever uploading an image
@@ -135,15 +143,15 @@ def render_sidebar(config: Config, client: OllamaClient) -> tuple[float, bool]:
         return temperature, regenerate
 
 
-def render_analysis(packet: object) -> None:
+def render_analysis(packet: EvidencePacket) -> None:
     """Draw the classification metrics and the raw BLIP text.
 
     Args:
         packet: The :class:`EvidencePacket` for the current image.
     """
-    label = packet.predicted_label  # type: ignore[attr-defined]
-    confidence = packet.confidence  # type: ignore[attr-defined]
-    probabilities = packet.probabilities  # type: ignore[attr-defined]
+    label = packet.predicted_label
+    confidence = packet.confidence
+    probabilities = packet.probabilities
 
     pill_class = "adc-pill-crack" if label == "crack" else "adc-pill-dent"
     st.markdown(
@@ -164,8 +172,8 @@ def render_analysis(packet: object) -> None:
     st.bar_chart(probabilities, horizontal=True, height=140)
 
     with st.expander("Raw model outputs"):
-        st.markdown(f"**BLIP caption** — {packet.caption}")  # type: ignore[attr-defined]
-        st.markdown(f"**BLIP description** — {packet.summary}")  # type: ignore[attr-defined]
+        st.markdown(f"**BLIP caption** — {packet.caption}")
+        st.markdown(f"**BLIP description** — {packet.summary}")
 
 
 def main() -> None:
@@ -215,7 +223,7 @@ def main() -> None:
 
                     st.write("Describing the image with BLIP…")
                     describer = load_describer(config.blip_model_id)
-                    description = describer.describe(image)  # type: ignore[attr-defined]
+                    description = describer.describe(image)
                     st.write(f"Caption: _{description.caption}_")
 
                     status.update(label="Analysis complete", state="complete", expanded=False)
