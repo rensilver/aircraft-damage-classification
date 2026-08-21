@@ -7,4 +7,3 @@ __pycache__/
 data/
 artifacts/
 .env
-uv.lock

@@ -148,6 +148,7 @@ class BlipCaptionSummaryLayer(tf.keras.layers.Layer):
         Raises:
             OSError: If the image cannot be opened.
         """
+        # Unlike the notebook, exceptions here are not caught — they propagate to the caller.
         image = Image.open(image_path.numpy().decode("utf-8")).convert("RGB")
         is_caption = task.numpy().decode("utf-8") == CAPTION_TASK
         prompt = CAPTION_PROMPT if is_caption else SUMMARY_PROMPT

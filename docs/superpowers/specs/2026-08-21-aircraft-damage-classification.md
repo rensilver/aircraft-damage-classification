@@ -108,6 +108,7 @@ it — it uses a plain `BlipDescriber` class that works on PIL images directly.
 | Test evaluation runs over the whole split | The notebook passes `steps=test_generator.samples // test_generator.batch_size`, which is `50 // 32 == 1` and scores only 32 of the 50 test images. This is a bug, not a design choice. |
 | `BlipCaptionSummaryLayer.process_image` no longer catches every exception | The notebook returns the string `"Error processing image"` on any failure, which is indistinguishable from a caption downstream. Errors now propagate and the UI renders them. |
 | `BlipDescriber` sets `max_new_tokens` (caption 30, summary 60) | BLIP's default of 20 tokens truncates the "detailed photo showing" prompt mid-sentence. The graded layer keeps library defaults. |
+| `pillow==10.4.0` instead of `11.1.0` | `streamlit==1.39.0` requires `pillow<11`; `10.4.0` is the latest release satisfying that cap and fixes several CVEs present in earlier 10.x releases. |
 
 ## Dataset
 

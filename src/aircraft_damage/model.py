@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import logging
 
+import numpy as np
+
 # isort: off
 from aircraft_damage import tf_env  # noqa: F401  # must precede the keras import
 
@@ -81,5 +83,6 @@ def build_model(
         loss=LOSS,
         metrics=list(METRICS),
     )
-    logger.info("Built classifier with %d trainable parameters", model.count_params())
+    trainable_params = sum(int(np.prod(w.shape)) for w in model.trainable_weights)
+    logger.info("Built classifier with %d trainable parameters", trainable_params)
     return model

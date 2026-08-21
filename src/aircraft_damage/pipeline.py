@@ -9,13 +9,16 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from PIL import Image
 
-from aircraft_damage.captioning import BlipDescriber, ImageDescription
 from aircraft_damage.classifier import ClassificationResult, DamageClassifier
 from aircraft_damage.llm import OllamaClient
 from aircraft_damage.report import DEFAULT_TEMPERATURE, EvidencePacket, generate_report
+
+if TYPE_CHECKING:
+    from aircraft_damage.captioning import BlipDescriber, ImageDescription
 
 logger = logging.getLogger(__name__)
 

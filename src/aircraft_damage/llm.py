@@ -6,6 +6,7 @@ module accepts or transmits image data — only text.
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 from typing import Any
@@ -99,8 +100,11 @@ class OllamaClient:
             response.raise_for_status()
         except httpx.HTTPError:
             return []
-        models: list[dict[str, Any]] = response.json().get("models", [])
-        return [str(entry["name"]) for entry in models]
+        try:
+            models: list[dict[str, Any]] = response.json().get("models", [])
+            return [str(entry["name"]) for entry in models]
+        except (json.JSONDecodeError, KeyError):
+            return []
 
     def has_model(self) -> bool:
         """Report whether the configured model has been pulled.
@@ -147,7 +151,10 @@ class OllamaClient:
         if response.status_code != HTTP_OK:
             raise OllamaError(f"Ollama returned {response.status_code}: {response.text[:200]}")
 
-        content = str(response.json().get("message", {}).get("content", ""))
+        try:
+            content = str(response.json().get("message", {}).get("content", ""))
+        except json.JSONDecodeError as exc:
+            raise OllamaError(f"Ollama returned a non-JSON response: {exc}") from exc
         cleaned = strip_thinking(content)
         if not cleaned:
             raise OllamaError(f"Ollama returned an empty response from {self.model}")

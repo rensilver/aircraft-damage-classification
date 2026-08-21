@@ -11,6 +11,7 @@ from aircraft_damage.classifier import (
     ClassificationResult,
     DamageClassifier,
     ModelNotTrainedError,
+    class_names_from_indices,
 )
 
 CLASS_NAMES = {0: "crack", 1: "dent"}
@@ -91,3 +92,7 @@ def test_result_is_immutable(sample_image: Image.Image) -> None:
 def test_load_raises_a_clear_error_when_the_model_is_missing(tmp_path: Path) -> None:
     with pytest.raises(ModelNotTrainedError, match="train"):
         DamageClassifier.load(tmp_path / "missing.keras", tmp_path / "metrics.json")
+
+
+def test_class_names_from_indices_inverts_the_mapping() -> None:
+    assert class_names_from_indices({"crack": 0, "dent": 1}) == {0: "crack", 1: "dent"}

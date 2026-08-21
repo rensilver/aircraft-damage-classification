@@ -44,6 +44,10 @@ docker compose up -d
 docker compose exec ollama ollama pull qwen3:4b
 ```
 
+The first inspection also downloads the BLIP captioning model (~1 GB) from
+Hugging Face on first use. If there is no network access on that first run,
+the app will show an error until BLIP is cached locally.
+
 ## Train
 
 ```bash
@@ -78,7 +82,7 @@ divergence from the source notebook, lives in
 | `ModelNotTrainedError` | Run the training command above. |
 | Sidebar: "Ollama unreachable" | `docker compose up -d`, then wait for the healthcheck. |
 | Sidebar: "Model not pulled" | `docker compose exec ollama ollama pull qwen3:4b` |
-| First report takes ~60 s | Ollama is loading the model into RAM. Later calls reuse it for 5 minutes. |
+| First report is slow | Report generation can take several minutes on CPU-only hardware — the client timeout is set to 600 seconds (10 minutes) to accommodate this. Ollama is also loading the model into RAM on the first call; later calls reuse it for 5 minutes. |
 | Training killed by the OOM reaper | Close other apps; this host has 6 GB total and Ollama holds up to 4 GB. `docker compose stop` while training. |
 | `tensorflow-cpu` will not install | The venv is not Python 3.12. Recreate it with `uv venv --python 3.12`. |
 

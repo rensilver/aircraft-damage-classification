@@ -73,15 +73,3 @@ def build_generators(
         train_generator.class_indices,
     )
     return train_generator, valid_generator, test_generator
-
-
-def class_names_from_indices(class_indices: dict[str, int]) -> dict[int, str]:
-    """Invert a Keras ``class_indices`` mapping.
-
-    Args:
-        class_indices: Mapping of class name to index, as Keras produces it.
-
-    Returns:
-        Mapping of index to class name.
-    """
-    return {index: name for name, index in class_indices.items()}

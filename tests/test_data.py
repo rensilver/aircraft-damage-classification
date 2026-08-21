@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from aircraft_damage.data import build_generators, class_names_from_indices
+from aircraft_damage.data import build_generators
 
 
 def test_generators_discover_both_classes_in_alphabetical_order(
@@ -65,7 +65,3 @@ def test_only_the_training_generator_shuffles(synthetic_dataset: Path) -> None:
     assert train.shuffle is True
     assert valid.shuffle is False
     assert test.shuffle is False
-
-
-def test_class_names_from_indices_inverts_the_mapping() -> None:
-    assert class_names_from_indices({"crack": 0, "dent": 1}) == {0: "crack", 1: "dent"}

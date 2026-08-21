@@ -40,7 +40,6 @@ def test_chat_posts_the_configured_model_and_messages() -> None:
 
     def handler(request: httpx.Request) -> httpx.Response:
         seen["url"] = str(request.url)
-        seen["json"] = httpx.Request("POST", "http://x", content=request.content).content
         import json
 
         seen["payload"] = json.loads(request.content)
@@ -137,3 +136,36 @@ def test_has_model_matches_the_configured_model() -> None:
     client = _client(handler)
     assert client.available_models() == ["qwen3:4b", "llama3:8b"]
     assert client.has_model() is True
+
+
+def test_available_models_returns_empty_list_on_malformed_json() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, text="not json")
+
+    assert _client(handler).available_models() == []
+
+
+def test_chat_raises_ollama_error_on_malformed_json_response() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, text="not json")
+
+    with pytest.raises(OllamaError):
+        _client(handler).chat("sys", "user")
+
+
+def test_chat_payload_contains_only_text_no_image_data() -> None:
+    captured: dict[str, object] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        import json as json_module
+
+        captured["payload"] = json_module.loads(request.content)
+        return httpx.Response(200, json={"message": {"content": "Report text."}})
+
+    _client(handler).chat("system prompt", "user prompt with evidence")
+
+    payload = captured["payload"]
+    assert set(payload.keys()) <= {"model", "messages", "stream", "think", "options", "keep_alive"}  # type: ignore[attr-defined]
+    for message in payload["messages"]:  # type: ignore[index]
+        assert set(message.keys()) == {"role", "content"}
+        assert isinstance(message["content"], str)

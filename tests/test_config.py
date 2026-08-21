@@ -61,8 +61,17 @@ def test_load_config_reads_ollama_settings_from_the_environment(
     assert config.ollama_model == "qwen3:8b"
 
 
-def test_load_config_falls_back_to_local_ollama() -> None:
+def test_load_config_falls_back_to_local_ollama(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("OLLAMA_HOST", raising=False)
+    monkeypatch.delenv("OLLAMA_MODEL", raising=False)
+
     config = load_config()
 
     assert config.ollama_host == "http://localhost:11434"
     assert config.ollama_model == "qwen3:4b"
+
+
+def test_ollama_timeout_defaults_to_600_seconds(tmp_path: Path) -> None:
+    config = Config(data_dir=tmp_path / "data", artifacts_dir=tmp_path / "artifacts")
+
+    assert config.ollama_timeout_s == 600

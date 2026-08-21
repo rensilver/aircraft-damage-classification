@@ -222,6 +222,9 @@ def main() -> None:
             except ModelNotTrainedError as exc:
                 st.error(str(exc))
                 return
+            except OSError as exc:
+                st.error(f"Could not analyse this image: {exc}")
+                return
 
             st.session_state[ANALYSIS_KEY] = analysis_key
             st.session_state[PACKET_KEY] = build_packet(
