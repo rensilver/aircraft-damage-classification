@@ -44,47 +44,47 @@ class Config:
     ollama_timeout_s: int = 180
 
     @property
-    def train_dir(self: Config) -> Path:
+    def train_dir(self) -> Path:
         """Directory holding the training split."""
         return self.data_dir / "train"
 
     @property
-    def valid_dir(self: Config) -> Path:
+    def valid_dir(self) -> Path:
         """Directory holding the validation split."""
         return self.data_dir / "valid"
 
     @property
-    def test_dir(self: Config) -> Path:
+    def test_dir(self) -> Path:
         """Directory holding the test split."""
         return self.data_dir / "test"
 
     @property
-    def target_size(self: Config) -> tuple[int, int]:
+    def target_size(self) -> tuple[int, int]:
         """Image size, as Keras generators expect it."""
         return (self.img_rows, self.img_cols)
 
     @property
-    def input_shape(self: Config) -> tuple[int, int, int]:
+    def input_shape(self) -> tuple[int, int, int]:
         """Model input shape, including the channel dimension."""
         return (self.img_rows, self.img_cols, 3)
 
     @property
-    def model_path(self: Config) -> Path:
+    def model_path(self) -> Path:
         """Path of the saved Keras classifier."""
         return self.artifacts_dir / MODEL_FILENAME
 
     @property
-    def metrics_path(self: Config) -> Path:
+    def metrics_path(self) -> Path:
         """Path of the training metrics JSON."""
         return self.artifacts_dir / METRICS_FILENAME
 
     @property
-    def accuracy_curve_path(self: Config) -> Path:
+    def accuracy_curve_path(self) -> Path:
         """Path of the accuracy curve image."""
         return self.artifacts_dir / ACCURACY_CURVE_FILENAME
 
     @property
-    def loss_curve_path(self: Config) -> Path:
+    def loss_curve_path(self) -> Path:
         """Path of the loss curve image."""
         return self.artifacts_dir / LOSS_CURVE_FILENAME
 

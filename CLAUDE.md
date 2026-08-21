@@ -1,22 +1,20 @@
 # Aircraft Damage Classification — Conventions
 
-## Python coding conventions
-
-1. **Minimal imports** — Don't import a module or function you don't use. When in doubt, comment why it's there.
-2. **Explicit is better** — Prefer `if x is True` over `if x`, and `config.seed = 42` (direct assignment) over `setattr`.
-3. **No type: ignore in tests** — Write the test so the type system passes. If you need `# type: ignore`, the test is incomplete or the code is wrong.
-4. **No magic strings** — Hardcoded paths, URLs, regex patterns, or error messages beyond single-use cases belong in constants (module-level or class-level). Name them `SCREAMING_SNAKE_CASE`.
-5. **Dataclasses, not namedtuples** — Use `@dataclass` for runtime behavior, including immutability with `frozen=True`. Namedtuples are for type-only code (rarely used here).
-6. **Prefer positional args in signatures** — Only use `*args` or `**kwargs` for variadic cases or when forwarding to an external API. Named args are clearer.
-7. **Avoid module-level side effects** — No `os.makedirs()`, no network calls, no randomness at import time. Exception: environment setup (e.g., `os.environ.setdefault`) in dedicated modules like `tf_env.py`.
-8. **Tests import the public API** — Tests import from the module root (`from aircraft_damage.config import Config`), not from private implementation details. Exception: fixtures that set up or tear down private state.
-9. **One assertion per test** (loosely) — When a test has many assertions, they should all check the same thing (e.g., properties of the same object). If you're testing unrelated concerns, split the test.
-10. **Fixtures over setup/teardown** — Use pytest fixtures for state management, not `setUp` / `tearDown` methods (which are pytest-compatible but verbose).
-11. **Monkeypatch, not manual mock** — Use `pytest.monkeypatch` for environment variables, not manual `os.environ` save/restore. Use `unittest.mock` only for complex patching (spies, call counts).
-12. **Avoid pytest.approx() for non-floats** — Use it only for floating-point comparisons. For ints or strings, use exact equality.
-13. **Descriptive test names** — Test names are documentation. `test_rejects_negative_seed` is clearer than `test_seed_validation`.
-14. **No global mutable state** — Don't modify `sys.modules`, monkey-patch builtins, or share state between tests. Fixtures are the right way to share setup.
-15. **One level of abstraction per function** — A function should not mix low-level details (regex, file I/O) with high-level logic (orchestration). Split them.
+1. **Type hints on every function and method**, including tests. `from __future__ import annotations` at the top of every module so annotations stay lazy and cheap.
+2. **`pathlib.Path`, never `os.path`.** Never build paths with string concatenation. (`ruff` rule set `PTH` enforces this.)
+3. **Frozen dataclasses for data.** Anything that is a bag of values is a `@dataclass(frozen=True)`. No dicts-as-records crossing module boundaries, no mutable default arguments.
+4. **Pure functions separated from I/O.** Anything that touches disk, network, or a model is a thin wrapper around a pure function that a unit test can call directly. This is why `report.build_user_prompt`, `llm.strip_thinking`, and `classifier.DamageClassifier.predict` are all testable without TensorFlow, torch, or a network.
+5. **Dependency injection over globals.** Modules take their collaborators as constructor arguments (`DamageClassifier(model, class_names)`, `run_inspection(..., client=client)`). No module-level model instances, no import-time side effects beyond setting TF env vars.
+6. **No bare `except:` and no `except Exception` that swallows.** Catch the narrowest exception type. If you must catch broadly, re-raise as a domain exception (`OllamaError`) with the original chained via `from exc`.
+7. **Errors are typed.** Each module that can fail for domain reasons defines its own exception (`OllamaError`). The Streamlit layer catches those and renders `st.error`; it never shows a traceback.
+8. **`logging`, never `print`,** in library code under `src/aircraft_damage/`. CLI entry points (`train.py`'s `main`) may print user-facing progress. Get the logger with `logger = logging.getLogger(__name__)` at module level.
+9. **Google-style docstrings** on every public module, class, and function. One-line summary, then `Args:` / `Returns:` / `Raises:` when non-obvious. Private helpers (`_leading_underscore`) may have a one-liner.
+10. **Module-level constants are `UPPER_SNAKE_CASE`** and live at the top of the file, right after imports. Prompts, regexes, and magic numbers must be named constants — no string literals buried in function bodies.
+11. **Keep modules small and single-purpose.** If a module in `src/aircraft_damage/` passes ~150 lines, that is a signal it is doing two jobs. The file structure below is already decomposed this way; do not merge modules to save files.
+12. **Tests: arrange / act / assert, one behaviour per test.** Test names read as sentences (`test_predict_returns_lower_class_when_probability_below_half`). No network, no model downloads, and no real training in the default test run — anything that needs those is marked `@pytest.mark.slow` and excluded by `-m "not slow"`.
+13. **Fakes over mocks.** Prefer a small hand-written stub class with the right shape to `unittest.mock.MagicMock`; a stub fails loudly when the interface changes, a mock silently accepts anything.
+14. **Line length 100.** `ruff format` is the only formatter; never hand-format around it.
+15. **Commit messages use Conventional Commits** (`feat:`, `test:`, `chore:`, `docs:`, `fix:`). Commit at the end of every task, never mid-task with a red test suite.
 
 ## Architecture invariants
 
