@@ -23,6 +23,7 @@ KEEP_ALIVE = "5m"
 HTTP_OK = 200
 HTTP_BAD_REQUEST = 400
 THINKING_PATTERN = re.compile(r"<think>.*?</think>", re.DOTALL)
+ORPHAN_THINKING_CLOSE_PATTERN = re.compile(r"^.*?</think>", re.DOTALL)
 
 
 class OllamaError(RuntimeError):
@@ -30,18 +31,26 @@ class OllamaError(RuntimeError):
 
 
 def strip_thinking(text: str) -> str:
-    """Remove inline ``<think>...</think>`` reasoning blocks.
+    """Remove inline reasoning, whether wrapped in <think> tags or not.
 
     Ollama versions that surface Qwen3's reasoning in a separate ``thinking``
-    field need no help here, but older builds inline it into the content.
+    field need no help here, but older builds inline it into the content. In
+    practice, the opening ``<think>`` tag lives in the model's chat template
+    and is never present in the returned text — only the closing tag is —
+    so a response with reasoning has an orphan ``</think>`` with nothing
+    preceding it but the reasoning itself.
 
     Args:
         text: Raw assistant content.
 
     Returns:
-        The content with reasoning blocks removed and surrounding space trimmed.
+        The content with reasoning removed and surrounding space trimmed.
     """
-    return THINKING_PATTERN.sub("", text).strip()
+    if "<think>" in text:
+        return THINKING_PATTERN.sub("", text).strip()
+    if "</think>" in text:
+        return ORPHAN_THINKING_CLOSE_PATTERN.sub("", text, count=1).strip()
+    return text.strip()
 
 
 class OllamaClient:

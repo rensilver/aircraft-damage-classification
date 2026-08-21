@@ -29,6 +29,12 @@ def test_strip_thinking_leaves_ordinary_text_alone() -> None:
     assert strip_thinking("## Finding\nA crack.") == "## Finding\nA crack."
 
 
+def test_strip_thinking_removes_an_orphan_closing_tag_with_no_opener() -> None:
+    text = "Lots of reasoning here.\nMore reasoning.\n</think>\n\nThe actual answer."
+
+    assert strip_thinking(text) == "The actual answer."
+
+
 def test_chat_posts_the_configured_model_and_messages() -> None:
     seen: dict[str, object] = {}
 
@@ -56,6 +62,16 @@ def test_chat_posts_the_configured_model_and_messages() -> None:
 def test_chat_strips_inline_thinking_from_the_response() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(200, json={"message": {"content": "<think>hmm</think>Done."}})
+
+    assert _client(handler).chat("sys", "user") == "Done."
+
+
+def test_chat_strips_orphan_closing_tag_from_the_response() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={"message": {"content": "Reasoning text here.\n</think>\n\nDone."}},
+        )
 
     assert _client(handler).chat("sys", "user") == "Done."
 
