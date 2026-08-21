@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from PIL import Image
 
-from aircraft_damage.captioning import ImageDescription
-from aircraft_damage.classifier import ClassificationResult
 from aircraft_damage.pipeline import build_packet, run_inspection
+from aircraft_damage.vision.captioning import ImageDescription
+from aircraft_damage.vision.classifier import ClassificationResult
 
 CLASSIFICATION = ClassificationResult(
     label="dent",

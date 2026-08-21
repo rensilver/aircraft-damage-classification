@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 from PIL import Image
 
-from aircraft_damage.captioning import (
+from aircraft_damage.vision.captioning import (
     CAPTION_PROMPT,
     SUMMARY_PROMPT,
     BlipDescriber,

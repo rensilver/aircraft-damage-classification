@@ -2,7 +2,7 @@
 
 Mirrors sections 1.4 to 1.6 of the source notebook. Run with::
 
-    uv run python -m aircraft_damage.train
+    uv run python -m aircraft_damage.vision.train
 """
 
 from __future__ import annotations
@@ -27,8 +27,8 @@ import numpy as np  # noqa: E402
 import tensorflow as tf  # noqa: E402
 
 from aircraft_damage.config import Config, load_config  # noqa: E402
-from aircraft_damage.data import build_generators  # noqa: E402
-from aircraft_damage.model import build_model  # noqa: E402
+from aircraft_damage.vision.data import build_generators  # noqa: E402
+from aircraft_damage.vision.model import build_model  # noqa: E402
 # isort: on
 
 logger = logging.getLogger(__name__)

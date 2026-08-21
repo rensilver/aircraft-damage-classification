@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 
-from aircraft_damage.llm import OllamaClient
+from aircraft_damage.reporting.llm import OllamaClient
 
 logger = logging.getLogger(__name__)
 

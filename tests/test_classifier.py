@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from aircraft_damage.classifier import (
+from aircraft_damage.vision.classifier import (
     ClassificationResult,
     DamageClassifier,
     ModelNotTrainedError,

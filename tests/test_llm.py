@@ -3,7 +3,7 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from aircraft_damage.llm import OllamaClient, OllamaError, strip_thinking
+from aircraft_damage.reporting.llm import OllamaClient, OllamaError, strip_thinking
 
 HOST = "http://ollama.test:11434"
 

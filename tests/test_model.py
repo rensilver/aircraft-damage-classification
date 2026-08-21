@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from aircraft_damage.model import build_feature_extractor, build_model
+from aircraft_damage.vision.model import build_feature_extractor, build_model
 
 INPUT_SHAPE = (224, 224, 3)
 

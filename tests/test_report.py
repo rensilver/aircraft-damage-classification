@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from aircraft_damage.report import (
+from aircraft_damage.reporting.report import (
     REPORT_SECTIONS,
     SYSTEM_PROMPT,
     EvidencePacket,

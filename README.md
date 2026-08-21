@@ -51,7 +51,7 @@ the app will show an error until BLIP is cached locally.
 ## Train
 
 ```bash
-uv run python -m aircraft_damage.train
+uv run python -m aircraft_damage.vision.train
 ```
 
 Writes `artifacts/vgg16_damage_classifier.keras`, `metrics.json`, and two curve

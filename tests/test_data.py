@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from aircraft_damage.data import build_generators
+from aircraft_damage.vision.data import build_generators
 
 
 def test_generators_discover_both_classes_in_alphabetical_order(

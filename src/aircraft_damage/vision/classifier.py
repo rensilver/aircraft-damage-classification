@@ -97,12 +97,12 @@ class DamageClassifier:
         if not model_path.exists():
             raise ModelNotTrainedError(
                 f"No trained model at {model_path}. "
-                "Run 'uv run python -m aircraft_damage.train' first."
+                "Run 'uv run python -m aircraft_damage.vision.train' first."
             )
         if not metrics_path.exists():
             raise ModelNotTrainedError(
                 f"No metrics at {metrics_path}. "
-                "Run 'uv run python -m aircraft_damage.train' first."
+                "Run 'uv run python -m aircraft_damage.vision.train' first."
             )
 
         from aircraft_damage import tf_env  # noqa: F401, PLC0415, I001

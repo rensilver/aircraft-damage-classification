@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from aircraft_damage.train import plot_curves, run_training, save_metrics, set_seeds
+from aircraft_damage.vision.train import plot_curves, run_training, save_metrics, set_seeds
 
 HISTORY = {
     "loss": [0.7, 0.5, 0.3],

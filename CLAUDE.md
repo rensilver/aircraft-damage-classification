@@ -30,6 +30,6 @@
 
 - Full check: `./scripts/check.sh`
 - Tests only: `uv run pytest -m "not slow"`
-- Train: `uv run python -m aircraft_damage.train`
+- Train: `uv run python -m aircraft_damage.vision.train`
 - App: `uv run streamlit run src/aircraft_damage/app/streamlit_app.py`
 - Ollama: `docker compose up -d` then `docker compose exec ollama ollama pull qwen3:4b`

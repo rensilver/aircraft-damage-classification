@@ -20,11 +20,11 @@ import streamlit as st
 from PIL import Image
 
 from aircraft_damage.app.styles import CUSTOM_CSS
-from aircraft_damage.classifier import DamageClassifier, ModelNotTrainedError
 from aircraft_damage.config import Config, load_config
-from aircraft_damage.llm import OllamaClient, OllamaError
 from aircraft_damage.pipeline import build_packet
-from aircraft_damage.report import LOW_CONFIDENCE_THRESHOLD, generate_report
+from aircraft_damage.reporting.llm import OllamaClient, OllamaError
+from aircraft_damage.reporting.report import LOW_CONFIDENCE_THRESHOLD, generate_report
+from aircraft_damage.vision.classifier import DamageClassifier, ModelNotTrainedError
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ def load_describer(model_id: str) -> object:
     Returns:
         A ``BlipDescriber``.
     """
-    from aircraft_damage.captioning import BlipDescriber  # noqa: PLC0415
+    from aircraft_damage.vision.captioning import BlipDescriber  # noqa: PLC0415
 
     return BlipDescriber.load(model_id)
 
@@ -102,7 +102,7 @@ def render_sidebar(config: Config, client: OllamaClient) -> tuple[float, bool]:
             st.success("Classifier artifact found")
         else:
             st.error("No trained classifier")
-            st.code("uv run python -m aircraft_damage.train", language="bash")
+            st.code("uv run python -m aircraft_damage.vision.train", language="bash")
 
         if not client.is_available():
             st.error(f"Ollama unreachable at {config.ollama_host}")

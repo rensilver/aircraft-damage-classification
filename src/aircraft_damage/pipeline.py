@@ -13,12 +13,12 @@ from typing import TYPE_CHECKING
 
 from PIL import Image
 
-from aircraft_damage.classifier import ClassificationResult, DamageClassifier
-from aircraft_damage.llm import OllamaClient
-from aircraft_damage.report import DEFAULT_TEMPERATURE, EvidencePacket, generate_report
+from aircraft_damage.reporting.llm import OllamaClient
+from aircraft_damage.reporting.report import DEFAULT_TEMPERATURE, EvidencePacket, generate_report
+from aircraft_damage.vision.classifier import ClassificationResult, DamageClassifier
 
 if TYPE_CHECKING:
-    from aircraft_damage.captioning import BlipDescriber, ImageDescription
+    from aircraft_damage.vision.captioning import BlipDescriber, ImageDescription
 
 logger = logging.getLogger(__name__)
 
