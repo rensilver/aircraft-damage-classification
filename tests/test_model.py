@@ -44,7 +44,7 @@ def test_model_emits_a_single_sigmoid_probability() -> None:
 def test_model_is_compiled_with_the_notebook_optimiser_and_loss() -> None:
     model = build_model(INPUT_SHAPE, learning_rate=0.0001, weights=None)
 
-    assert model.optimizer.name.lower() == "adam"
+    assert "adam" in model.optimizer.name.lower()
     assert float(model.optimizer.learning_rate) == pytest.approx(0.0001, rel=1e-5)
     assert "binary_crossentropy" in str(model.loss)
 

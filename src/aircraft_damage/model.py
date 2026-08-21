@@ -81,7 +81,5 @@ def build_model(
         loss=LOSS,
         metrics=list(METRICS),
     )
-    # Reset optimizer name to ensure consistent naming across model instances
-    model.optimizer.name = "adam"
     logger.info("Built classifier with %d trainable parameters", model.count_params())
     return model
