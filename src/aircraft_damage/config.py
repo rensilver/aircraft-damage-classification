@@ -41,7 +41,7 @@ class Config:
     blip_model_id: str = "Salesforce/blip-image-captioning-base"
     ollama_host: str = DEFAULT_OLLAMA_HOST
     ollama_model: str = DEFAULT_OLLAMA_MODEL
-    ollama_timeout_s: int = 180
+    ollama_timeout_s: int = 600
 
     @property
     def train_dir(self) -> Path:
