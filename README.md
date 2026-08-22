@@ -1,10 +1,29 @@
-# Aircraft Damage Classification & Reporting
+# ✈️ Aircraft Damage Classification & Reporting
 
 Classify aircraft surface damage as **crack** or **dent** with a VGG16 feature
-extractor, describe the image with BLIP, and have a local `qwen3:4b` model write a
-preliminary maintenance report. Ships with a Streamlit app.
+extractor, describe the image with BLIP, and have a local LLM (`qwen3:4b`)
+draft a preliminary maintenance report — all through a Streamlit app.
 
-Refactored from the IBM *Deep Learning with Keras* final project notebook.
+Refactored from the IBM *Deep Learning with Keras* final project notebook into
+a modular, testable pipeline.
+
+![Python](https://img.shields.io/badge/python-3.12-blue)
+![Streamlit](https://img.shields.io/badge/UI-Streamlit-ff4b4b)
+![TensorFlow](https://img.shields.io/badge/model-VGG16-orange)
+![Ollama](https://img.shields.io/badge/LLM-qwen3%3A4b%20via%20Ollama-lightgrey)
+![Docker](https://img.shields.io/badge/runtime-Docker-2496ED)
+
+---
+
+## Table of Contents
+
+- [How it works](#how-it-works)
+- [Setup](#setup)
+- [Train](#train)
+- [Run the app](#run-the-app)
+- [Development](#development)
+- [Troubleshooting](#troubleshooting)
+- [Limitations](#limitations)
 
 ## How it works
 
@@ -18,13 +37,13 @@ image ──> VGG16 classifier ──> label + confidence ─┐
                                    qwen3:4b (Ollama) ──> Markdown report
 ```
 
-`qwen3:4b` has **no vision encoder**. It never receives image pixels — it writes
-the report from the classifier's verdict and BLIP's text alone, and its system
-prompt requires it to say so.
+`qwen3:4b` has **no vision encoder**. It never receives image pixels — it
+writes the report from the classifier's verdict and BLIP's text alone, and
+its system prompt requires it to say so.
 
 ## Setup
 
-Requires Python 3.12, [uv](https://docs.astral.sh/uv/), and Docker.
+Requires **Python 3.12**, [uv](https://docs.astral.sh/uv/), and **Docker**.
 
 ```bash
 uv venv --python 3.12
@@ -44,9 +63,9 @@ docker compose up -d
 docker compose exec ollama ollama pull qwen3:4b
 ```
 
-The first inspection also downloads the BLIP captioning model (~1 GB) from
-Hugging Face on first use. If there is no network access on that first run,
-the app will show an error until BLIP is cached locally.
+> **Note:** the first inspection also downloads the BLIP captioning model
+> (~1 GB) from Hugging Face on first use. If there's no network access on
+> that first run, the app will show an error until BLIP is cached locally.
 
 ## Train
 
@@ -54,8 +73,8 @@ the app will show an error until BLIP is cached locally.
 uv run python -m aircraft_damage.vision.train
 ```
 
-Writes `artifacts/vgg16_damage_classifier.keras`, `metrics.json`, and two curve
-PNGs. Five epochs on CPU takes roughly 10–20 minutes.
+Writes `artifacts/vgg16_damage_classifier.keras`, `metrics.json`, and two
+curve PNGs. Five epochs on CPU takes roughly 10–20 minutes.
 
 ## Run the app
 
@@ -71,9 +90,9 @@ uv run pytest -m "not slow"         # fast tests only
 uv run pytest -m slow               # downloads BLIP, trains a tiny model
 ```
 
-Conventions live in `CLAUDE.md`. The design rationale, including every deliberate
-divergence from the source notebook, lives in
-`docs/superpowers/specs/2026-08-21-aircraft-damage-classification.md`.
+Conventions live in `CLAUDE.md`. The design rationale, including every
+deliberate divergence from the source notebook, lives in
+[`docs/superpowers/specs/2026-08-21-aircraft-damage-classification.md`](docs/superpowers/specs/2026-08-21-aircraft-damage-classification.md).
 
 ## Troubleshooting
 
